@@ -36,6 +36,7 @@
 			<groupId>net.runelite</groupId>
 			<artifactId>launcher</artifactId>
 			<version>${launcher.version}</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

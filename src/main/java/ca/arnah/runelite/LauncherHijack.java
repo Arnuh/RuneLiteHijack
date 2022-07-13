@@ -6,7 +6,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import javax.swing.UIManager;
-import net.runelite.launcher.Launcher;
 
 /**
  * @author Arnah
@@ -65,7 +64,12 @@ public class LauncherHijack{
 		// Force disable the "JVMLauncher", was just easiest way to do what I wanted at the time.
 		System.setProperty("runelite.launcher.nojvm", "true");
 		new LauncherHijack();
-		Launcher.main(args);
+		// Launcher.main(args);
+		try{
+			Class<?> clazz = Class.forName("net.runelite.launcher.Launcher");
+			clazz.getMethod("main", String[].class).invoke(null, (Object) args);
+		}catch(Exception ignored){
+		}
 		System.out.println("Launcher finished");
 	}
 }
