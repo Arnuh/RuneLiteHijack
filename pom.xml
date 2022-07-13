@@ -32,12 +32,11 @@
 			<artifactId>client</artifactId>
 			<version>${runelite.version}</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>net.runelite</groupId>
 			<artifactId>launcher</artifactId>
 			<version>${launcher.version}</version>
-			<optional>true</optional>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
