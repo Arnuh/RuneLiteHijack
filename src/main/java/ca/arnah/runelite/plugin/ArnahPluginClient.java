@@ -33,7 +33,8 @@ public class ArnahPluginClient{
 	
 	public List<ArnahPluginManifest> downloadManifest() throws IOException{
 		List<ArnahPluginManifest> manifests = new ArrayList<>();
-		for(HttpUrl url : RuneLiteHijackProperties.getPluginHubBase()){
+		List<HttpUrl> pluginHubs = RuneLiteHijackProperties.getPluginHubBase();
+		for(HttpUrl url : pluginHubs){
 			HttpUrl manifest = url.newBuilder().addPathSegments("plugins.json").build();
 			try(Response res = okHttpClient.newCall(new Request.Builder().url(manifest).build()).execute()){
 				if(res.code() != 200){
@@ -66,6 +67,12 @@ public class ArnahPluginClient{
 					.filter(m->m.getUrl() == null).forEach(m->m.setUrl(url + "/" + m.getProvider() + "/" + m.getInternalName() + ".jar"));
 				
 				manifests.addAll(newManifests);
+			}catch(Exception ex){
+				if(ex instanceof IOException && pluginHubs.size() != 1){
+					log.error("", ex);
+				}else{
+					throw ex;
+				}
 			}
 		}
 		return manifests;
