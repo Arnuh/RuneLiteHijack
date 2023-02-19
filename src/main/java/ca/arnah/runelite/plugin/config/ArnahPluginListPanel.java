@@ -80,9 +80,10 @@ public class ArnahPluginListPanel{
 			.filter(ConfigPlugin.class::isInstance)
 			.findAny().ifPresent(plugin->{
 			             try{
-				             Field field = ConfigPlugin.class.getDeclaredField("pluginListPanel");
+				             Field field = ConfigPlugin.class.getDeclaredField("pluginListPanelProvider");
 				             field.setAccessible(true);
-				             pluginListPanel = (PluginPanel) (objPluginListPanel = field.get(plugin));
+				             Provider<PluginPanel> pluginPanelProvider = (Provider<PluginPanel>) field.get(plugin);
+				             pluginListPanel = (PluginPanel) (objPluginListPanel = pluginPanelProvider.get());
 				             SwingUtilities.invokeLater(()->{
 					             JPanel southPanel = new FixedWidthPanel();
 					             southPanel.setLayout(new BorderLayout());

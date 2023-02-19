@@ -67,7 +67,7 @@ public class ArnahPluginManifest{
 	private String url;
 	
 	@EqualsAndHashCode.Exclude
-	private Supplier<HashFunction> hashType = Hashing::sha256;
+	private transient Supplier<HashFunction> hashType = Hashing::sha256;
 	
 	File getJarFile(){
 		return new File(PLUGINS_DIR, getInternalName() + ".jar");

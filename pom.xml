@@ -10,7 +10,7 @@
 
 	<properties>
 		<jdk.version>11</jdk.version>
-		<runelite.version>1.8.3-SNAPSHOT</runelite.version>
+		<runelite.version>1.9.11-SNAPSHOT</runelite.version>
 		<launcher.version>2.1.8-SNAPSHOT</launcher.version>
 		<lombok.version>1.18.22</lombok.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
