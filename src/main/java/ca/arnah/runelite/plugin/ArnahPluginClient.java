@@ -38,7 +38,7 @@ public class ArnahPluginClient{
 			HttpUrl manifest = url.newBuilder().addPathSegments("plugins.json").build();
 			try(Response res = okHttpClient.newCall(new Request.Builder().url(manifest).build()).execute()){
 				if(res.code() != 200){
-					throw new IOException("Non-OK response code: " + res.code());
+					throw new IOException("Non-OK response code: " + res.code() + " on url " + manifest);
 				}
 				
 				BufferedSource src = res.body().source();
@@ -49,22 +49,20 @@ public class ArnahPluginClient{
 				
 				if(data.contains("releases")){
 					List<MemePluginManifest> memeManifests = RuneLiteAPI.GSON.fromJson(data, tempType);
-					newManifests.stream()
-						.filter(m->m.getUrl() == null).forEach(m->{
-						            MemePluginManifest.MemeRelease release = memeManifests.stream()
-							            .filter(mm->m.getInternalName().equals(mm.getInternalName()))
-							            .map(mm->mm.getReleases().get(mm.getReleases().size() - 1))
-							            .findFirst()
-							            .orElse(null);
-						            if(release == null) return;
-						            m.setUrl(release.getUrl());
-						            m.setHash(release.getSha512sum().toLowerCase());
-						            m.setHashType(Hashing::sha512);
-					            });
+					newManifests.stream().filter(m->m.getUrl() == null).forEach(m->{
+						MemePluginManifest.MemeRelease release = memeManifests.stream()
+							.filter(mm->m.getInternalName().equals(mm.getInternalName()))
+							.map(mm->mm.getReleases().get(mm.getReleases().size() - 1))
+							.findFirst()
+							.orElse(null);
+						if(release == null) return;
+						m.setUrl(release.getUrl());
+						m.setHash(release.getSha512sum().toLowerCase());
+						m.setHashType(Hashing::sha512);
+					});
 				}
 				
-				newManifests.stream()
-					.filter(m->m.getUrl() == null).forEach(m->m.setUrl(url + "/" + m.getProvider() + "/" + m.getInternalName() + ".jar"));
+				newManifests.stream().filter(m->m.getUrl() == null).forEach(m->m.setUrl(url + "/" + m.getProvider() + "/" + m.getInternalName() + ".jar"));
 				
 				manifests.addAll(newManifests);
 			}catch(Exception ex){
