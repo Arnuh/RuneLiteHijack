@@ -40,6 +40,7 @@ import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.SwingUtilities;
+import ca.arnah.runelite.RuneLiteHijackProperties;
 import ca.arnah.runelite.events.ArnahPluginsChanged;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -108,6 +109,7 @@ public class ArnahPluginManager{
 		
 		boolean startup = SplashScreen.isOpen();
 		try{
+			String pluginHubUrls = RuneLiteHijackProperties.getPluginHubProperty();
 			double splashStart = startup ? .60 : 0;
 			double splashLength = startup ? .10 : 1;
 			if(!startup){
@@ -153,7 +155,8 @@ public class ArnahPluginManager{
 				for(ArnahPluginManifest manifest : needsDownload){
 					try(Response res = okHttpClient.newCall(new Request.Builder().url(manifest.getUrl()).build()).execute()){
 						int fdownloaded = downloaded;
-						HashingInputStream his = new HashingInputStream(manifest.getHashType().get(), new CountingInputStream(res.body().byteStream(), i->SplashScreen.stage(splashStart + (splashLength * .2), splashStart + (splashLength * .8), null, "Downloading " + manifest.getDisplayName(), i + fdownloaded, toDownload, true)));
+						HashingInputStream his = new HashingInputStream(manifest.getHashType().get(), new CountingInputStream(res.body()
+							.byteStream(), i->SplashScreen.stage(splashStart + (splashLength * .2), splashStart + (splashLength * .8), null, "Downloading " + manifest.getDisplayName(), i + fdownloaded, toDownload, true)));
 						Files.asByteSink(manifest.getJarFile()).writeFrom(his);
 						String hash = his.hash().toString();
 						if(!hash.equals(manifest.getHash())){
@@ -264,6 +267,11 @@ public class ArnahPluginManager{
 			}
 			if(!startup){
 				eventBus.post(new ArnahPluginsChanged(manifestList));
+			}
+			// Allows plugins to adjust the plugin hub urls if they want
+			// We then need to check plugins again with the new urls
+			if(!pluginHubUrls.equals(RuneLiteHijackProperties.getPluginHubProperty())){
+				update();
 			}
 		}finally{
 			if(!startup){

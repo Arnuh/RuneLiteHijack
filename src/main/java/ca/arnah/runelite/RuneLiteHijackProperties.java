@@ -12,10 +12,17 @@ import okhttp3.HttpUrl;
 public class RuneLiteHijackProperties{
 	
 	private static final String PLUGINHUB_BASE = "runelitehijack.pluginhub.url";
+	private static final String PLUGINHUB_BASE_URL = "https://raw.githubusercontent.com/Arnuh/RuneLiteHijack-PluginHub/master/";
 	
 	public static List<HttpUrl> getPluginHubBase(){
-		return Arrays.stream(System.getProperty(PLUGINHUB_BASE, "https://raw.githubusercontent.com/Arnuh/RuneLiteHijack-PluginHub/master/").split(","))
-			.map(HttpUrl::parse)
-			.collect(Collectors.toList());
+		return Arrays.stream(getPluginHubs()).map(HttpUrl::parse).collect(Collectors.toList());
+	}
+	
+	public static String[] getPluginHubs(){
+		return System.getProperty(PLUGINHUB_BASE, PLUGINHUB_BASE_URL).split(",");
+	}
+	
+	public static String getPluginHubProperty(){
+		return System.getProperty(PLUGINHUB_BASE, PLUGINHUB_BASE_URL);
 	}
 }
