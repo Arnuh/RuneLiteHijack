@@ -50,6 +50,7 @@ import com.google.common.io.Files;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.events.ExternalPluginsChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginInstantiationException;
 import net.runelite.client.plugins.PluginManager;
@@ -230,19 +231,21 @@ public class ArnahPluginManager{
 					}
 					
 					List<Plugin> newPlugins2 = newPlugins = pluginManager.loadPlugins(clazzes, null);
-					if(!startup){
-						pluginManager.loadDefaultPluginConfiguration(newPlugins);
-						
-						SwingUtilities.invokeAndWait(()->{
-							try{
-								for(Plugin p : newPlugins2){
-									pluginManager.startPlugin(p);
+					// Below would only run if !startup, removed just incase it was blocking plugins from loading in cases
+					pluginManager.loadDefaultPluginConfiguration(newPlugins);
+					SwingUtilities.invokeAndWait(()->{
+						try{
+							for(Plugin p : newPlugins2){
+								if(pluginManager.startPlugin(p)){
+									log.info("Started plugin {}", p.getName());
+								}else{
+									log.warn("Failed to start plugin {}", p.getName());
 								}
-							}catch(PluginInstantiationException ex){
-								throw new RuntimeException(ex);
 							}
-						});
-					}
+						}catch(PluginInstantiationException ex){
+							log.error("Failed to start plugins", ex);
+						}
+					});
 				}catch(ThreadDeath e){
 					throw e;
 				}catch(Throwable e){
@@ -267,10 +270,12 @@ public class ArnahPluginManager{
 			}
 			if(!startup){
 				eventBus.post(new ArnahPluginsChanged(manifestList));
+				eventBus.post(new ExternalPluginsChanged());
 			}
 			// Allows plugins to adjust the plugin hub urls if they want
 			// We then need to check plugins again with the new urls
 			if(!pluginHubUrls.equals(RuneLiteHijackProperties.getPluginHubProperty())){
+				log.info("Detected pluginhub urls have been changed, pulling again.");
 				update();
 			}
 		}finally{
