@@ -39,6 +39,8 @@ import ca.arnah.runelite.events.ArnahPluginsChanged;
 import ca.arnah.runelite.plugin.ArnahPluginManager;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigDescriptor;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
@@ -76,38 +78,36 @@ public class ArnahPluginListPanel{
 	}
 	
 	public void init(){
-		pluginManager.getPlugins().stream()
-			.filter(ConfigPlugin.class::isInstance)
-			.findAny().ifPresent(plugin->{
-			             try{
-				             Field field = ConfigPlugin.class.getDeclaredField("pluginListPanelProvider");
-				             field.setAccessible(true);
-				             Provider<PluginPanel> pluginPanelProvider = (Provider<PluginPanel>) field.get(plugin);
-				             pluginListPanel = (PluginPanel) (objPluginListPanel = pluginPanelProvider.get());
-				             SwingUtilities.invokeLater(()->{
-					             JPanel southPanel = new FixedWidthPanel();
-					             southPanel.setLayout(new BorderLayout());
-					             for(Component maybeAButton : pluginListPanel.getComponents()){
-						             if(maybeAButton instanceof JButton){
-							             JButton button = (JButton) maybeAButton;
-							             if(button.getText() == null) continue;
-							             if(!button.getText().equals("Plugin Hub")) continue;
-							             pluginListPanel.remove(button);
-							             southPanel.add(button, "North");
-						             }
-					             }
-					             JButton externalPluginButton = new JButton("RuneLiteHijack Plugin Hub");
-					             externalPluginButton.setBorder(new EmptyBorder(5, 5, 5, 5));
-					             externalPluginButton.setLayout(new BorderLayout(0, PluginPanel.BORDER_OFFSET));
-					             externalPluginButton.addActionListener(l->getMuxer().pushState(pluginHubPanelProvider.get()));
-					             southPanel.add(externalPluginButton, "South");
-					             pluginListPanel.add(southPanel, "South");
-					             rebuildPluginList();
-				             });
-			             }catch(Exception ex){
-				             log.error("Failed to initialize RuneLiteHijack Plugin Hub", ex);
-			             }
-		             });
+		pluginManager.getPlugins().stream().filter(ConfigPlugin.class::isInstance).findAny().ifPresent(plugin->{
+			try{
+				Field field = ConfigPlugin.class.getDeclaredField("pluginListPanelProvider");
+				field.setAccessible(true);
+				Provider<PluginPanel> pluginPanelProvider = (Provider<PluginPanel>) field.get(plugin);
+				pluginListPanel = (PluginPanel) (objPluginListPanel = pluginPanelProvider.get());
+				SwingUtilities.invokeLater(()->{
+					JPanel southPanel = new FixedWidthPanel();
+					southPanel.setLayout(new BorderLayout());
+					for(Component maybeAButton : pluginListPanel.getComponents()){
+						if(maybeAButton instanceof JButton){
+							JButton button = (JButton) maybeAButton;
+							if(button.getText() == null) continue;
+							if(!button.getText().equals("Plugin Hub")) continue;
+							pluginListPanel.remove(button);
+							southPanel.add(button, "North");
+						}
+					}
+					JButton externalPluginButton = new JButton("RuneLiteHijack Plugin Hub");
+					externalPluginButton.setBorder(new EmptyBorder(5, 5, 5, 5));
+					externalPluginButton.setLayout(new BorderLayout(0, PluginPanel.BORDER_OFFSET));
+					externalPluginButton.addActionListener(l->getMuxer().pushState(pluginHubPanelProvider.get()));
+					southPanel.add(externalPluginButton, "South");
+					pluginListPanel.add(southPanel, "South");
+					rebuildPluginList();
+				});
+			}catch(Exception ex){
+				log.error("Failed to initialize RuneLiteHijack Plugin Hub", ex);
+			}
+		});
 	}
 	
 	public MultiplexingPluginPanel getMuxer(){
@@ -133,6 +133,22 @@ public class ArnahPluginListPanel{
 			ex.printStackTrace();
 		}
 		refresh();
+	}
+	
+	public void addFakePlugin(String name, String description, String[] tags, Config config, ConfigDescriptor configDescriptor){
+		try{
+			var method = objPluginListPanel.getClass().getDeclaredField("fakePlugins");
+			method.setAccessible(true);
+			List<Object> fakePlugins = (List<Object>) method.get(objPluginListPanel);
+			
+			var clazz = Class.forName("net.runelite.client.plugins.config.PluginConfigurationDescriptor")
+				.getDeclaredConstructor(String.class, String.class, String[].class, Config.class, ConfigDescriptor.class);
+			clazz.setAccessible(true);
+			Object descriptor = clazz.newInstance(name, description, tags, config, configDescriptor);
+			fakePlugins.add(descriptor);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
 	}
 	
 	void refresh(){

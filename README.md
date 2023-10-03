@@ -14,17 +14,26 @@ Random project I made to run my own custom or modified external plugins on the o
 
 ![example](https://im.arnah.ca/3cB8zf5ZaE.png)
 
-If properly done, you should see "RuneLiteHijack Plugin Hub" in plugin configuration
+If properly done, you should see "RuneLiteHijack Plugin Hub" or a "RuneLiteHijack" plugin in plugin configuration
 
 ![example](https://im.arnah.ca/Bn1tEIgJLC9rWGF.png)
 
 # Adding additional Plugin Hubs
 
-The default plugin hub is a GitHub repository viewable [here](https://github.com/Arnuh/RuneLiteHijack-PluginHub). You can use this as a template to create
-your own plugin hub, while also using the provided plugin to customize additional plugin hubs by using a comma separated list.
+RuneLite Hijack comes with a builtin plugin that allows you to add additional plugin hubs. You can access this plugin like the similar "RuneLite" builtin
+plugin.
 
-For GitHub repositories, you need to make sure the url is a "raw githubusercontent" link like `https://raw.githubusercontent.
-com/Arnuh/RuneLiteHijack-PluginHub/master/`.
+![example](https://im.arnah.ca/c4orAVtodc7VkeE.png)
+
+The default plugin hub is a GitHub repository viewable [here](https://github.com/Arnuh/RuneLiteHijack-PluginHub). You can use this as a template to create
+your own plugin hub.
+
+For GitHub repositories, you need to make sure the url is a "raw githubusercontent" link
+like the following `https://raw.githubusercontent.com/Arnuh/RuneLiteHijack-PluginHub/master/`.
+
+With the "Plugin Hubs" settings, you can add additional plugin hubs to the list by using a comma separated list of urls.
+
+![Plugin Hub Example](https://im.arnah.ca/jHNzJb81jtxWDfP.png)
 
 # Structure of Plugin Hubs
 

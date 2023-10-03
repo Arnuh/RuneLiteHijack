@@ -11,8 +11,8 @@ import okhttp3.HttpUrl;
  **/
 public class RuneLiteHijackProperties{
 	
-	private static final String PLUGINHUB_BASE = "runelitehijack.pluginhub.url";
-	private static final String PLUGINHUB_BASE_URL = "https://raw.githubusercontent.com/Arnuh/RuneLiteHijack-PluginHub/master/";
+	public static final String PLUGINHUB_BASE = "runelitehijack.pluginhub.url";
+	public static final String PLUGINHUB_BASE_URL = "https://raw.githubusercontent.com/Arnuh/RuneLiteHijack-PluginHub/master/";
 	
 	public static List<HttpUrl> getPluginHubBase(){
 		return Arrays.stream(getPluginHubs()).map(HttpUrl::parse).collect(Collectors.toList());
