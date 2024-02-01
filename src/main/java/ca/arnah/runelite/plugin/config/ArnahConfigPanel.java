@@ -58,7 +58,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
-import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerModel;
@@ -100,7 +99,7 @@ import net.runelite.client.ui.DynamicGridLayout;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.ui.components.ColorJButton;
-import net.runelite.client.ui.components.ComboBoxListRenderer;
+import net.runelite.client.ui.components.TitleCaseListCellRenderer;
 import net.runelite.client.ui.components.colorpicker.ColorPickerManager;
 import net.runelite.client.ui.components.colorpicker.RuneliteColorPicker;
 import net.runelite.client.util.ColorUtil;
@@ -126,7 +125,7 @@ class ArnahConfigPanel extends PluginPanel{
 	private final JLabel title;
 	private final ArnahPluginToggleButton pluginToggle;
 	
-	private final ListCellRenderer<Enum<?>> listCellRenderer = new ComboBoxListRenderer<>();
+	private final TitleCaseListCellRenderer listCellRenderer = new TitleCaseListCellRenderer();
 	
 	@Inject
 	private ArnahPluginListPanel pluginList;
@@ -368,7 +367,9 @@ class ArnahConfigPanel extends PluginPanel{
 		
 		JButton resetButton = new JButton("Reset");
 		resetButton.addActionListener((e)->{
-			final int result = JOptionPane.showOptionDialog(resetButton, "Are you sure you want to reset this plugin's configuration?", "Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, new String[]{"Yes", "No"}, "No");
+			final int result = JOptionPane.showOptionDialog(resetButton, "Are you sure you want to reset this plugin's configuration?", "Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, new String[]{
+				"Yes",
+				"No"}, "No");
 			
 			if(result == JOptionPane.YES_OPTION){
 				configManager.setDefaultConfiguration(pluginConfig.getConfig(), true);
@@ -602,7 +603,9 @@ class ArnahConfigPanel extends PluginPanel{
 		final ConfigItem configItem = cid.getItem();
 		
 		if(!Strings.isNullOrEmpty(configItem.warning())){
-			final int result = JOptionPane.showOptionDialog(component, configItem.warning(), "Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, new String[]{"Yes", "No"}, "No");
+			final int result = JOptionPane.showOptionDialog(component, configItem.warning(), "Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, new String[]{
+				"Yes",
+				"No"}, "No");
 			
 			if(result != JOptionPane.YES_OPTION){
 				rebuild();
