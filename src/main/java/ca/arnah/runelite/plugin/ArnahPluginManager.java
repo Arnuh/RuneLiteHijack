@@ -220,7 +220,7 @@ public class ArnahPluginManager{
 						try(InputStream is = url.openStream()){
 							for(String line : new String(is.readAllBytes()).split("\n")){
 								if(line.startsWith("#")) continue;
-								clazzes.add(cl.loadClass(line));
+								clazzes.add(cl.loadClass(line.replace("\n", "").replace("\r", "")));
 							}
 						}
 					}
